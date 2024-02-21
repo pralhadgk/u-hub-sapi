@@ -1,0 +1,124 @@
+#%RAML 1.0
+title: uhub-sapi-project
+baseUri: http://localhost:8081/covid
+
+traits:
+  x-correlation-id-header: !include /exchange_modules/7e08f513-8962-49b1-b52d-a8fb2e9bd2e7/x-correlation-id-header/1.0.0/x-correlation-id-header.raml
+  x-transaction-id-header: !include /exchange_modules/7e08f513-8962-49b1-b52d-a8fb2e9bd2e7/x-transaction-id-header/1.0.0/x-transaction-id-header.raml
+  query-param: !include /exchange_modules/7e08f513-8962-49b1-b52d-a8fb2e9bd2e7/query-param/1.0.0/query-param.raml
+
+uses:
+  get-datatype-library: datatype-library/get-datatype.raml
+  error-response: /exchange_modules/7e08f513-8962-49b1-b52d-a8fb2e9bd2e7/error-response/1.0.0/error-responses.raml
+
+/v1/cases:
+  post:
+    description: This resource used to register a covid case.
+    is: [x-correlation-id-header, x-transaction-id-header]
+    body:
+      application/json:
+        type: !include /uhub-request-datatypes/dataType.raml
+        example: !include /example/request.json
+    responses:
+        200:
+           body:
+              application/json:
+                  type: !include /uhub-request-datatypes/response-data-type.raml
+                  example: !include /example/register-response.json
+        400:
+          body:
+            application/json:
+              type: !include /error-responses/400-error.raml
+              example: !include /example/404.json
+        503:
+          body:
+            application/json:
+              type: !include /exchange_modules/7e08f513-8962-49b1-b52d-a8fb2e9bd2e7/uhub-503-error/1.0.0/uhub-503-error.raml
+              example: !include /example/503.json
+        500:
+          body:
+            application/json:
+              type: !include /uhub-request-datatypes/500.raml
+              example: !include /example/500.json
+  put:
+    description: This resource used to update a covid case.
+    body:
+      application/xml:
+        type: !include /uhub-request-datatypes/put-dataType.raml
+        example: !include /example/request.xml
+    responses:
+      200:
+        body:
+          application/xml:
+            type: get-datatype-library.update-covid-case-response-type
+            example: !include /example/200.xml
+      400:
+        body:
+          application/xml:
+            type: error-response.response
+            example: !include /example/400.xml
+      503:
+        body:
+          application/xml:
+            type: error-response.response
+            example: !include /example/503.xml
+      500:
+        body:
+          application/xml:
+            type: error-response.response
+            example: !include /example/500.xml
+/{nationalID}:
+    get:
+      description: To get covid cases by national id
+      is: [x-correlation-id-header, x-transaction-id-header]
+      responses:
+        200:
+          body:
+            application/json:
+              type: get-datatype-library.get-cases-by-national-id-response-type
+              example: !include /example/200.json
+        503:
+          body:
+            application/json:
+              type: error-response.response
+              example: !include /example/503.json
+        500:
+          body:
+            application/json:
+              type: error-response.response
+              example: !include /example/500.json 
+/reports: 
+  description: To get reports by state wise and if state not provided all states reports responded
+  get:
+    is: [x-correlation-id-header, x-transaction-id-header, query-param]
+    responses:
+      200:
+        body:
+          application/json:
+            type: !include /uhub-request-datatypes/report.raml
+            example: !include /example/report.json
+      503:
+          body:
+            application/json:
+              type: error-response.response
+              example: !include /example/503.json
+      500:
+          body:
+            application/json:
+              type: error-response.response
+              example: !include /example/500.json
+/health-check:
+  description: To check health status of API
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                "message": "Uhub-sapi is alive and kicking"
+              }
+
+            
+        
+  

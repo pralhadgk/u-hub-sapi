@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="uhub-db-subflow" doc:id="77d335e1-f719-4d86-9975-ff7c4dff87c1" >
+		<logger level="DEBUG" doc:name="Logger" doc:id="38939040-277f-4989-b482-9782bb6c6db6" message="Start"/>
+		<db:insert doc:name="Insert" doc:id="c0386b0b-0e8a-4415-82e0-b824f9a882b5" config-ref="Database_Config" autoGenerateKeys="true">
+			<db:sql><![CDATA[insert into cvd_case_master(source, case_type, first_name, last_name, phone, email, date_of_birth, national_id, national_id_type, street_address, city, state, postal, country, create_date, update_date, create_by, update_by) values (:source, :case_type, :first_name, :last_name, :phone, :email, To_date(:date_of_birth, 'YYYY-MM-DD'), :national_id, :national_id_type, :street_address, :city, :state, :postal, :country, To_date(:create_date,'YYYY-MM-DD'), To_date(:update_date,'YYYY-MM-DD'), :create_by, :update_by)]]></db:sql>
+			<db:input-parameters><![CDATA[#[vars.covidPayload]]]></db:input-parameters>
+			<db:auto-generated-keys-column-names>
+				<db:auto-generated-keys-column-name value="CASE_ID" />
+			</db:auto-generated-keys-column-names>
+		</db:insert>
+		<logger level="DEBUG" doc:name="Logger" doc:id="0746aedf-b5fd-44a3-8689-2916c297a130" message="end"/>
+	
+</sub-flow>
+	</mule>
